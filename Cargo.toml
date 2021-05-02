@@ -1,0 +1,11 @@
+[package]
+name = "tinyhttpd"
+version = "0.1.0"
+authors = ["Satoshi Moriai <moriai.satoshi@ntt-tx.co.jp>"]
+edition = "2018"
+
+[dependencies]
+tiny_http = "0.8.1"
+ascii = "1.0"
+log = "0.4.0"
+simplelog = "0.10.0"
