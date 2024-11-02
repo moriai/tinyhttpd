@@ -7,6 +7,7 @@ use std::path::Path;
 use std::env;
 use log::info;
 use simplelog::{ConfigBuilder, SimpleLogger, LevelFilter};
+use time::macros::format_description;
 
 fn get_content_type(path: &Path) -> &'static str {
     let extension = match path.extension() {
@@ -30,8 +31,9 @@ fn get_content_type(path: &Path) -> &'static str {
 
 fn main() {
     let config = ConfigBuilder::new()
-        .set_time_to_local(true)
-        .set_time_format("%b %e %T".to_string())
+        .set_time_offset_to_local().unwrap()
+        .set_time_format_custom(format_description!(
+            "[month repr:short] [day padding:space] [hour]:[minute]:[second]"))
         .build();
     SimpleLogger::init(LevelFilter::Info, config).unwrap();
 
@@ -39,7 +41,7 @@ fn main() {
     info!("The current directory is {}", curdir.display());
 
     let server = tiny_http::Server::http("0.0.0.0:8000").unwrap();
-    let port = server.server_addr().port();
+    let port = server.server_addr().to_ip().unwrap().port();
     info!("Now listening on port {}", port);
 
     loop {
