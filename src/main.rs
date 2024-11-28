@@ -22,6 +22,8 @@ fn get_content_type(path: &Path) -> &'static str {
         "png" => "image/png",
         "pdf" => "application/pdf",
         "js" => "application/javascript; charset=utf8",
+        "ddeb" => "application/vnd.debian.binary-package",
+        "deb" => "application/vnd.debian.binary-package",
         "htm" => "text/html; charset=utf8",
         "html" => "text/html; charset=utf8",
         "txt" => "text/plain; charset=utf8",
