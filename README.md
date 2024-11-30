@@ -1,6 +1,6 @@
 # tinyhttpd
 
-**tinyhttpd** is an example of crate tiny_httpd.
+[**tinyhttpd**](target/doc/tinyhttpd/index.html) is an example of crate tiny_httpd.
 The original source code can be found [here](https://github.com/tiny-http/tiny-http).
 
 ## License
