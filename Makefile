@@ -1,12 +1,14 @@
 TARGETS = README.html
 
-.PHONY: all build clean
+.PHONY: all build run clean
 
-all: build $(TARGETS)
-
-build:
-	cargo build --release
+all build: $(TARGETS)
 	cargo doc
+	cargo build --release
+
+run: $(TARGETS)
+	cargo doc
+	cargo run --release
 
 README.html: README.md
 	pandoc $^ -o $@
