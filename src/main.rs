@@ -3,7 +3,7 @@
 
 use ascii::AsciiString;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::env;
 use log::info;
 use simplelog::{ConfigBuilder, SimpleLogger, LevelFilter};
@@ -34,6 +34,23 @@ fn get_content_type(path: &Path) -> &'static str {
     }
 }
 
+#[cfg(feature = "canon_path")]
+fn getpath(url: &String, cwd: &str) -> Option<PathBuf> {
+    let str = String::from(url);
+    let str = str.strip_prefix("/")?;
+    let path = Path::new(str);
+    let cpath = fs::canonicalize(path).ok()?;
+    let rpath = cpath.strip_prefix(cwd.to_string()).ok()?;
+    Some(rpath.to_owned())
+}
+
+#[cfg(not(feature = "canon_path"))]
+fn getpath(url: &String, _cwd: &str) -> Option<PathBuf> {
+    let str = String::from(url);
+    let str = str.strip_prefix("/")?;
+    Some(Path::new(str).to_owned())
+}
+
 fn main() {
     let config = ConfigBuilder::new()
         .set_time_offset_to_local().unwrap()
@@ -43,7 +60,8 @@ fn main() {
     SimpleLogger::init(LevelFilter::Info, config).unwrap();
 
     let curdir = env::current_dir().unwrap();
-    info!("The current directory is {}", curdir.display());
+    let curdir = curdir.to_str().unwrap();
+    info!("The current directory is {}", curdir);
 
     let server = tiny_http::Server::http("0.0.0.0:8000").unwrap();
     let port = server.server_addr().to_ip().unwrap().port();
@@ -58,7 +76,11 @@ fn main() {
         info!("{:?}", rq);
 
         let url = rq.url().to_string();
-        let path = Path::new(&url).strip_prefix("/").unwrap();
+        let path = if let Some(path) = getpath(&url, curdir) { path } else {
+            let rep = tiny_http::Response::new_empty(tiny_http::StatusCode(404));
+            let _ = rq.respond(rep);
+            continue;
+        };
         let file = fs::File::open(&path);
 
         if file.is_ok() {
