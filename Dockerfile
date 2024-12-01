@@ -1,5 +1,5 @@
-# docker build -t tinyhttpd:0.0.1 .
-# docker run -d -p 80:8000 --read-only -v your_htdocs:/htdocs --rm tinyhttpd:0.0.1
+# docker build -t tinyhttpd:0.2.0 .
+# docker run -d -p 80:8000 --read-only -v your_htdocs:/htdocs --rm tinyhttpd:0.2.0
 
 FROM rust:latest AS builder
 WORKDIR /usr/src/tinyhttpd
